@@ -43,6 +43,7 @@ RUN  chmod +x /build.sh && bash /build.sh
 RUN apt-get clean
 RUN apt-get autoclean
 
-VOLUME ['/usr/local/bin/ffmpeg', '/usr/local/bin/ffprobe']
+VOLUME /usr/local/bin/ffmpeg
+VOLUME /usr/local/bin/ffprobe
 
-CMD /bin/bash -c "ffmpeg -version ; ffprobe -version"
+CMD /bin/bash -c "tail -f /dev/null ; ffmpeg -version ; ffprobe -version"
