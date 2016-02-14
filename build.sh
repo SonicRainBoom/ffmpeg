@@ -1,5 +1,9 @@
 #!/bin/bash
 
+mkdir -p "/ffmpeg/bin"
+CORES=$(cat /proc/cpuinfo | grep processor | wc -l)
+echo -e "------\n\n\nDetected ${CORES} cores/CPUs, will try to run make with '-j${CORES}'.\n\n\n"
+
 # FAAC if enabled
 # This combines faac + http://stackoverflow.com/a/4320377
 if [[ "-${ADDITIONAL_FLAGS}" =~ .*libfaac.* ]]; then
@@ -11,7 +15,7 @@ if [[ "-${ADDITIONAL_FLAGS}" =~ .*libfaac.* ]]; then
     sed -i '126d' common/mp4v2/mpeg4ip.h
     ./bootstrap
     ./configure --prefix="${SRC}" --bindir="${SRC}/bin"
-    make
+    make -j${CORES}
     make install
     rm -rf ${DIR}
 else
@@ -27,7 +31,7 @@ if [[ "-${ADDITIONAL_FLAGS}" =~ .*libfdk_aac.* ]]; then
     cd fdk-aac-${FDKAAC_VERSION}
     autoreconf -fiv
     ./configure --prefix="${SRC}" --disable-shared
-    make
+    make -j${CORES}
     make install
     make distclean
     rm -rf ${DIR}
@@ -49,7 +53,7 @@ cd ffmpeg*
     --prefix="${SRC}" \
     --extra-cflags="-I${SRC}/include" \
     --extra-ldflags="-L${SRC}/lib" \
-    --bindir="${SRC}/bin" \
+    --bindir="/ffmpeg/bin" \
     --extra-libs=-static \
     --enable-static \
     --enable-libtheora \
@@ -62,7 +66,7 @@ cd ffmpeg*
     --disable-ffplay \
     --disable-ffserver \
     --disable-shared
-make
+make -j${CORES}
 make install
 make distclean
 hash -r
